@@ -1,8 +1,8 @@
 @echo off
 :title
 
-:: Ñîçäàåì JS ôàéë
-echo var objFolder = (new ActiveXObject("Shell.Application")).BrowseForFolder(0, "Óêàæèòå äèðåêòîðèþ äëÿ ñîõðàíåíèÿ ôàéëîâ", 0);>>browse_dir.js
+:: Создаем JS файл
+echo var objFolder = (new ActiveXObject("Shell.Application")).BrowseForFolder(0, "Укажите директорию для сохранения файлов", 0);>>browse_dir.js
 echo if (objFolder) WScript.StdOut.Write(objFolder.Self.Path);>>browse_dir.js
 
 title RADIO RECORDS
@@ -10,17 +10,17 @@ del /f /s /q %tmp%\*.m3u
 cls
 IF NOT EXIST "%programfiles%\streamripper\streamripper.exe" start "get" /wait "http://sourceforge.net/project/showfiles.php?group_id=6172&package_id=258843"
 
-:: Ïðîâåðÿåì ôàéë íàñòðîåê ñîõðàíåíèÿ ïóòè äëÿ çàïèñè
+:: Проверяем файл настроек сохранения пути для записи
 IF NOT EXIST %userprofile%\radio_save_dir goto browse_new_radio_save_dir
 IF EXIST %userprofile%\radio_save_dir goto start_radio_save_dir
 
-:: Åñëè ôàéë åñòü, áåðåì èç íåãî ïóòü äëÿ ñîõðàíåíèÿ
+:: Если файл есть, берем из него путь для сохранения
 :start_radio_save_dir
 chcp 1251 > nul
 for /f "usebackq tokens=* delims=" %%i In ("%userprofile%\radio_save_dir") do set file_save_dir=%%i
 chcp 866 > nul
 
-:: Óäàëÿåì JS ôàéë
+:: Удаляем JS файл
 del /f /s /q browse_dir.js
 cls
 
@@ -103,7 +103,7 @@ start "radio" /i %station%
 
 goto start
 
-:: Åñëè íåò ôàéëà ñ íàñòðîéêàìè ïóòåé äëÿ ñîõðàíåíèÿ - ñîçäàåì åãî è îòïðàâëÿåì â íà÷àëî
+:: Если нет файла с настройками путей для сохранения - создаем его и отправляем в начало
 :browse_new_radio_save_dir
 chcp 1251 > nul
 FOR /F "tokens=*" %%i IN ('cscript /nologo browse_dir.js') DO SET file_save_dir=%%i
